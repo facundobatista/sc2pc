@@ -1,0 +1,5 @@
+PyYAML
+bunch
+feedgen
+requests
+soundcloud_v2
