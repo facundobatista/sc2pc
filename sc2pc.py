@@ -63,6 +63,12 @@ def download_new_tracks(show, limit_timestamp, podcast_dir, metadata_file_path):
         if item.created_at <= limit_timestamp.astimezone():
             continue
 
+        # fix the track creation time to be the one of the item (when it was uploaded), otherwise
+        # we may get mixed times of the tracks and it breaks the RSS clients: if track A is
+        # created before B but uploaded after it, the RSS will see that B is latest, and will
+        # never get A
+        item.track.created_at = item.created_at
+
         tracks.append(item.track)
 
     logger.info("Found %d tracks", len(tracks))
