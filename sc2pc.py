@@ -60,7 +60,7 @@ def download_new_tracks(show, limit_timestamp, podcast_dir, metadata_file_path):
         if item.type != "track":
             continue
 
-        if item.created_at < limit_timestamp.astimezone():
+        if item.created_at <= limit_timestamp.astimezone():
             continue
 
         tracks.append(item.track)
