@@ -198,6 +198,9 @@ class Main:
                 exit()
             else:
                 self.last_track_times = {"__since__": since}
+        else:
+            if since is not None:
+                self.last_track_times = {"__since__": since}
 
         # open the config file
         try:
