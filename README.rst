@@ -1,8 +1,5 @@
-radiocut2podcast
-================
-
-RadioCut is an awesome service, please consider support them by `buying a
-premium suscription <http://radiocut.fm/premium/>`_.
+soundclad2podcast
+=================
 
 
 Generic syntax
@@ -10,7 +7,7 @@ Generic syntax
 
 ::
 
-    rc2pc.py [--since][--quiet][--show]
+    sc2pc.py [--since][--quiet][--show]
         pc_dir history_file config_file base_public_url
 
 where:
@@ -43,26 +40,12 @@ The config file should be a YAML file with the show(s) information, each
 show having an id and some info (and repeat everything for each show you
 want to podcast)::
 
-  show_id:
-        name: The Show Name
-        description: A description for the show
-        station: the station name as appears in radiocut
-        cron: a string with crontab info in "m h dom mon dow" format,
-              indicating when the show starts
-        timezone: the timezone used when writing the cron hours
-        duration: the show duration (in seconds)
-        image_url: the URL of an image representing the show
-
-Example for one show::
-
-    gentedeapie:
-        name: La vida en particular
-        description: Programa de los Sábados de Mario Wainfeld
-        station: nacional870
-        cron: "00   10    *     *     6"  # m h dom mon dow
-        timezone: America/Buenos_Aires
-        duration: 10800  # 3hs in seconds
-        image_url: http://noserver.com/gentedeapie.jpeg
+    superprograma:
+      name: Super Programa
+      description: Podcast del super programa conducido por La Hormiga Atómica
+      soundcloud_url: https://soundcloud.com/fake
+      image_url: https://img.com/devnull/image.jpg
+      timezone: America/Buenos_Aires
 
 
 How to use
@@ -70,8 +53,8 @@ How to use
 
 First / eventual manual call::
 
-    rc2pc.py --since=2017-05-23 ./podcast/ rc2pc.hist rc2pc.yaml
+    sc2pc.py --since=2017-05-23 ./podcast/ sc2pc.hist sc2pc.yaml
 
 Something to put in the crontab::
 
-    rc2pc.py --quiet ./podcast/ rc2pc.hist rc2pc.yaml
+    sc2pc.py --quiet ./podcast/ sc2pc.hist sc2pc.yaml
