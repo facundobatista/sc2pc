@@ -42,10 +42,10 @@ def download_new_tracks(show, limit_timestamp, podcast_dir, metadata_file_path):
     """Get all tracks from an url more recent that the limit timestamp."""
     client = SoundCloud("KhqBlYHkMDSGNC9DdLrcJHXqaLv5kOrh", None)
 
-    # if not client.is_client_id_valid():
-    #     client = SoundCloud(None, None)
-    #     if not client.is_client_id_valid():
-    #         raise ValueError("Dynamically generated client_id is not valid")
+    if not client.is_client_id_valid():
+        client = SoundCloud(None, None)
+        if not client.is_client_id_valid():
+            raise ValueError("Dynamically generated client_id is not valid")
 
     user = client.resolve(show.soundcloud_url)
     if not user:
