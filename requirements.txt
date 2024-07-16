@@ -1,5 +1,6 @@
 PyYAML
-bunch
+bunch-py3
 feedgen
+python-dateutil
 requests
 soundcloud_v2

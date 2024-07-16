@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import datetime
 import json
 import logging
 import os
@@ -10,18 +11,22 @@ import subprocess
 import sys
 from operator import attrgetter
 
-import bunch
 import dateutil.parser
 import requests
 import yaml
+from bunch_py3 import Bunch
 from feedgen.feed import FeedGenerator
 from soundcloud import SoundCloud
+from dateutil.utils import default_tzinfo
+from dateutil.tz import tzoffset
 
 logger = logging.getLogger()
 h = logging.StreamHandler()
 h.setFormatter(logging.Formatter("%(asctime)s %(levelname)-10s %(message)s"))
 logger.addHandler(h)
 logger.setLevel(logging.INFO)
+
+DFLT_TZ = tzoffset("UTC", 0)
 
 
 def is_ffmpeg_available():
@@ -30,7 +35,7 @@ def is_ffmpeg_available():
 
 
 def get_stream_url(client, url):
-    headers = client.get_default_headers()
+    headers = client._get_default_headers()
     if client.auth_token:
         headers["Authorization"] = f"OAuth {client.auth_token}"
     req = requests.get(url, params={"client_id": client.client_id}, headers=headers)
@@ -55,7 +60,6 @@ def download_new_tracks(show, limit_timestamp, podcast_dir, metadata_file_path):
     resources = client.get_user_stream(user.id, limit=1000)
 
     tracks = []
-    # for i, item in itertools.islice(enumerate(resources, 1), offset, None):
     for idx, item in enumerate(resources):
         if item.type != "track":
             continue
@@ -71,8 +75,16 @@ def download_new_tracks(show, limit_timestamp, podcast_dir, metadata_file_path):
 
         tracks.append(item.track)
 
-    logger.info("Found %d tracks", len(tracks))
-    for idx, track in enumerate(sorted(tracks, key=attrgetter("created_at"))):
+    modern = []
+    date_limit = default_tzinfo(datetime.datetime.now(), DFLT_TZ) - datetime.timedelta(days=30)
+    for idx, track in enumerate(sorted(tracks, key=attrgetter("created_at"), reverse=True)):
+        logger.debug("    exploring episode date %s", track.created_at)
+        if track.created_at < date_limit and idx > 10:
+            break
+        modern.append(track)
+
+    logger.info("Found %d tracks", len(modern))
+    for idx, track in enumerate(modern):
         title = track.title.strip('"')
         logger.info("Downloading %d: (%s) %r", idx, track.created_at, title)
 
@@ -154,7 +166,7 @@ def load_config(config_file_path, selected_show):
             logger.error("Invalid soundclad url: %r", show_data.soundcloud_url)
             exit()
 
-        config_data.append(bunch.Bunch(show_data, id=show_id))
+        config_data.append(Bunch(show_data, id=show_id))
 
     return config_data
 
